@@ -1,143 +1,150 @@
-/* General styles */
+/* General Styling */
 body {
     font-family: Arial, sans-serif;
-    background-color: #121212;
-    color: white;
     margin: 0;
     padding: 0;
-}
-
-header {
-    background-color: #FF0000;
-    padding: 20px;
+    background-color: #f4f4f4;
+    color: #333;
     text-align: center;
 }
 
-main {
+/* Header */
+header {
+    background-color: #333;
+    color: #fff;
     padding: 20px;
 }
 
-/* Search bar and button */
+h1 {
+    margin: 0;
+}
+
+/* Search Bar */
 #search-container {
+    margin: 20px auto;
+    max-width: 600px;
     display: flex;
     justify-content: center;
-    align-items: center;
-    margin-bottom: 20px;
+    gap: 10px;
 }
 
 #search {
     width: 70%;
     padding: 10px;
-    border: none;
-    border-radius: 5px 0 0 5px;
-    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
 }
 
 #search-button {
-    padding: 10px 15px;
-    background-color: #FF0000;
+    padding: 10px 20px;
+    background-color: #333;
+    color: #fff;
     border: none;
-    border-radius: 0 5px 5px 0;
-    color: white;
+    border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
-    transition: background-color 0.3s;
 }
 
-#search-button:hover {
-    background-color: #cc0000;
-}
-
-/* Music list */
+/* Search Results */
 #music-list {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    margin: 20px auto;
+    max-width: 600px;
 }
 
 .music-item {
-    background-color: #282828;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 15px;
-    margin: 10px;
-    width: 300px;
-    text-align: center;
+    padding: 10px;
+    border: 1px solid #ddd;
+    margin: 10px 0;
+    background-color: #fff;
     cursor: pointer;
-    transition: background-color 0.3s;
+    border-radius: 5px;
 }
 
 .music-item:hover {
-    background-color: #404040;
+    background-color: #f0f0f0;
+}
+
+/* Playlist Section */
+#toggle-playlist-btn {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    display: inline-block;
 }
 
 #playlist-section {
-    margin-top: 20px;
-}
-
-#temp-playlist {
+    margin: 20px auto;
+    max-width: 600px;
+    padding: 10px;
+    background-color: #fff;
     border: 1px solid #ddd;
-    padding: 10px;
-    min-height: 50px;
-    background-color: #f9f9f9;
+    border-radius: 5px;
 }
 
-.playlist-item {
+#temp-playlist .playlist-item {
     padding: 10px;
-    border-bottom: 1px solid #ddd;
+    border: 1px solid #ddd;
+    margin: 10px 0;
+    background-color: #f9f9f9;
+    border-radius: 5px;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.playlist-item h3 {
+#temp-playlist .playlist-item h3 {
     margin: 0;
-    font-size: 16px;
+    font-size: 14px;
 }
 
-/* Music player */
-#music-player {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: #282828;
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    color: white;
-    gap: 10px;
-}
-
-#music-player img {
-    width: 40px; /* Set logo size */
-    height: 40px;
-    border-radius: 50%;
-}
-
-#current-track {
-    flex: 1;
-    font-size: 16px;
-    margin-right: 10px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-#music-player button {
-    background: none;
+#temp-playlist .playlist-item button {
+    padding: 5px 10px;
+    background-color: #e74c3c;
+    color: #fff;
     border: none;
-    color: white;
-    font-size: 24px;
-    margin: 0 10px;
+    border-radius: 5px;
     cursor: pointer;
 }
 
-footer {
-    background-color: #121212; /* Match the theme */
-    color: #FF0000;
-    text-align: center;
-    padding: 15px 0;
-    font-size: 14px;
-    margin-top: 20px; /* Add space above the footer */
+/* Music Player */
+#music-player {
+    margin: 20px auto;
+    padding: 10px;
+    max-width: 600px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+#channel-logo {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 1px solid #ddd;
+}
+
+#current-track {
+    flex-grow: 1;
+    text-align: left;
+    font-size: 16px;
+}
+
+#music-player button {
+    padding: 10px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
 }
