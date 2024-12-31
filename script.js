@@ -18,7 +18,10 @@ function onYouTubeIframeAPIReady() {
 
 // Handle YouTube player state changes
 function onPlayerStateChange(event) {
-    if (event.data === YT.PlayerState.ENDED) {
+    if (event.data === YT.PlayerState.PLAYING) {
+        // Set playback quality to "small" (low quality)
+        player.setPlaybackQuality('small');
+    } else if (event.data === YT.PlayerState.ENDED) {
         playNext(); // Automatically play the next song when the current one ends
     }
 }
@@ -49,12 +52,14 @@ function displayMusic(videos) {
 function playMusic(index) {
     currentIndex = index;
     const videoId = playlist[index].id.videoId;
+    const trackTitle = playlist[index].snippet.title; // Get track title
     player.loadVideoById(videoId); // Load the video into the hidden player
+    document.getElementById('current-track').textContent = trackTitle; // Update track name
     isPlaying = true;
     updatePlayPauseButton();
 }
 
-// Toggle Play/Pause
+// Play/Pause toggle
 function togglePlayPause() {
     if (isPlaying) {
         player.pauseVideo(); // Pause the video
@@ -85,29 +90,12 @@ function updatePlayPauseButton() {
     playPauseButton.innerHTML = isPlaying ? '⏸️' : '▶️';
 }
 
-// Add Event Listeners for Bottom Player Controls
-document.getElementById('play-pause').addEventListener('click', togglePlayPause);
-document.getElementById('next').addEventListener('click', playNext);
-document.getElementById('prev').addEventListener('click', playPrevious);
-
-// Debounce function to limit API calls during search
-function debounce(func, delay) {
-    let timer;
-    return (...args) => {
-        clearTimeout(timer);
-        timer = setTimeout(() => func.apply(this, args), delay);
-    };
-}
-
-// Search input listener with debounce
-document.getElementById('search').addEventListener(
-    'input',
-    debounce((event) => {
-        const query = event.target.value;
-        if (query.length > 0) {
-            fetchMusic(query);
-        } else {
-            document.getElementById('music-list').innerHTML = ''; // Clear music list if input is empty
-        }
-    }, 500)
-);
+// Event listener for search button
+document.getElementById('search-button').addEventListener('click', () => {
+    const query = document.getElementById('search').value;
+    if (query.trim().length > 0) {
+        fetchMusic(query);
+    } else {
+        document.getElementById('music-list').innerHTML = ''; // Clear music list if input is empty
+    }
+});
