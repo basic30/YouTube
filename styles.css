@@ -124,7 +124,6 @@ h1 {
     align-items: center;
     justify-content: flex-start; /* Align elements to the left */
     gap: 10px; /* Increase the gap between the logo and track title */
-    z-index: 100; /* Ensure it's always on top */
 }
 
 #channel-logo {
