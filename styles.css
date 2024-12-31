@@ -118,7 +118,7 @@ header {
     background-color: #282828;
     padding: 10px;
     display: flex;
-    justify-content: flex-start; /* Align elements to the left */
+    justify-content: center; /* Align eflex-st the left */
     align-items: center;
     gap: 10px;
 }
