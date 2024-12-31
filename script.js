@@ -32,7 +32,7 @@ async function fetchMusic(query) {
 
 // Display music tracks in the list
 function displayMusic(videos) {
-    playlist = videos; // Save the playlist
+    playlist = videos.slice(0, 2); // Save the playlist
     const musicList = document.getElementById('music-list');
     musicList.innerHTML = ''; // Clear previous content
 
