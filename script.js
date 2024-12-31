@@ -86,15 +86,41 @@ async function playRandomRelatedMusic() {
 function playNext() {
     if (currentIndex < playlist.length - 1) {
         currentIndex++;
-        playMusic(currentIndex); // Play the next track in the playlist
+        playMusic(currentIndex);
     } else {
-        // If at the end of the playlist, fetch and play random related music
         const currentVideoId = playlist[currentIndex]?.id.videoId;
         if (currentVideoId) {
             playRandomRelatedMusic();
         } else {
-            console.log("No more videos in the playlist and no video ID available.");
+            console.log("No current video ID to fetch related music.");
         }
+    }
+}
+
+async function playRandomRelatedMusic() {
+    const currentVideoId = playlist[currentIndex]?.id.videoId;
+    if (!currentVideoId) {
+        console.log("No video ID available to fetch related music.");
+        return;
+    }
+
+    try {
+        const response = await fetch(
+            `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&relatedToVideoId=${currentVideoId}&key=${apiKey}`
+        );
+        const data = await response.json();
+
+        if (data.items && data.items.length > 0) {
+            const randomIndex = Math.floor(Math.random() * data.items.length);
+            const randomVideo = data.items[randomIndex];
+
+            playlist.push(randomVideo); // Add to playlist
+            playMusic(playlist.length - 1); // Play the last added video
+        } else {
+            console.log("No related videos found.");
+        }
+    } catch (error) {
+        console.error("Error fetching related music:", error);
     }
 }
 
