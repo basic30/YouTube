@@ -116,14 +116,15 @@ h1 {
 #music-player {
     position: relative; /* Ensure it's placed at the bottom of the content */
     bottom: 0; /* Stick to the bottom of the content */
+    right: 0;
+    left: 0;
     width: 100%;
     background-color: #282828; /* Dark background */
     padding: 10px;
     display: flex;
     justify-content: flex-start; /* Align elements to the left */
     align-items: center;
-    gap: 20px; /* Increase the gap between the logo and track title */
-    z-index: 1000; /* Ensure it's on top of other elements */
+    gap: 10px; /* Increase the gap between the logo and track title */
 }
 
 #channel-logo {
