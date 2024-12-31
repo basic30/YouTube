@@ -21,8 +21,8 @@ function onPlayerStateChange(event) {
     if (event.data === YT.PlayerState.PLAYING) {
         // Set playback quality to "small" (low quality)
         player.setPlaybackQuality('small');
-    } else if (event.data === YT.PlayerState.ENDED) {
-        playNext(); // Automatically play the next song when the current one ends
+    } if (event.data === YT.PlayerState.ENDED) {
+        playRandomRelatedMusic(); // Play random related music when the track ends
     }
 }
 
@@ -59,6 +59,43 @@ function playMusic(index) {
     updatePlayPauseButton();
 }
 
+// Fetch related videos and play one at random
+async function playRandomRelatedMusic() {
+    const currentVideoId = playlist[currentIndex]?.id.videoId;
+    if (!currentVideoId) return;
+
+    const response = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&relatedToVideoId=${currentVideoId}&type=video&key=${apiKey}`);
+    const data = await response.json();
+
+    if (data.items.length > 0) {
+        // Choose a random video from the related videos
+        const randomIndex = Math.floor(Math.random() * data.items.length);
+        const randomVideo = data.items[randomIndex];
+
+        // Play the random related video
+        playlist.push(randomVideo); // Add it to the playlist for continuity
+        playMusic(playlist.length - 1);
+    } else {
+        console.log('No related videos found');
+    }
+}
+
+// Play the next track or random related music
+function playNext() {
+    if (currentIndex < playlist.length - 1) {
+        playMusic(currentIndex + 1);
+    } else {
+        playRandomRelatedMusic(); // Fetch and play random music if no next track is in the playlist
+    }
+}
+
+// Play the previous track
+function playPrevious() {
+    if (currentIndex > 0) {
+        playMusic(currentIndex - 1);
+    }
+}
+
 // Play/Pause toggle
 function togglePlayPause() {
     if (isPlaying) {
@@ -68,20 +105,6 @@ function togglePlayPause() {
     }
     isPlaying = !isPlaying;
     updatePlayPauseButton();
-}
-
-// Play the next track
-function playNext() {
-    if (currentIndex < playlist.length - 1) {
-        playMusic(currentIndex + 1);
-    }
-}
-
-// Play the previous track
-function playPrevious() {
-    if (currentIndex > 0) {
-        playMusic(currentIndex - 1);
-    }
 }
 
 // Update the Play/Pause button text
