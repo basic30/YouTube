@@ -115,41 +115,52 @@ h1 {
 
 /* Music Player */
 #music-player {
-    position: relative; /* Fixed position at the bottom */
-    bottom: 0; /* Stick to the bottom */
+    position: relative;
+    bottom: 0;
     left: 0;
     right: 0;
-    background-color: #282828; /* Dark background */
+    background-color: #282828;
     padding: 10px;
     display: flex;
+    justify-content: flex-start;
     align-items: center;
-    justify-content: flex-start; /* Align elements to the left */
-    gap: 10px; /* Increase the gap between the logo and track title */
+    gap: 10px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
-#channel-logo {
-    width: 50px;
-    height: 50px;
+#music-player img {
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    border: 1px solid #ccc;
+}
+
+#music-player div {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    max-width: 70%; /* Limit the width of the track name */
 }
 
 #current-track {
-    flex-grow: 1;
-    text-align: left;
     font-size: 16px;
+    color: white;
+    white-space: nowrap; /* Prevent line breaks */
+    overflow: hidden; /* Hide overflowing content */
+    text-overflow: ellipsis; /* Add ellipsis for overflow text */
+    width: 100%; /* Ensure the text is contained within the space */
+    padding-right: 10px; /* Spacing between track name and buttons */
 }
 
 #music-player button {
-    padding: 10px;
-    background-color: #FF0000; /* Red buttons */
-    color: white;
+    background: none;
     border: none;
-    border-radius: 5px;
+    color: white;
+    font-size: 24px;
+    margin: 0 10px;
     cursor: pointer;
-    font-size: 16px;
 }
 
 #music-player button:hover {
-    color: #cc0000; /* Darker red on hover */
+    color: #FF0000;
 }
