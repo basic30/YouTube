@@ -2,13 +2,13 @@ const apiKey = 'AIzaSyA7k6glBajX2aK8yx49FhqDL43VesRIG64'; // Replace with your Y
 let player; // YouTube IFrame Player instance
 let currentIndex = 0;
 let isPlaying = false;
-let playlist = [];
+let tempPlaylist = []; // Temporary playlist array
 
 // Load the YouTube IFrame API and create the hidden player
 function onYouTubeIframeAPIReady() {
     player = new YT.Player('hidden-player', {
-        height: '0', // Hidden player
-        width: '0',  // Hidden player
+        height: '0',
+        width: '0',
         events: {
             onReady: () => console.log('YouTube Player is ready'),
             onStateChange: onPlayerStateChange,
@@ -19,150 +19,173 @@ function onYouTubeIframeAPIReady() {
 // Handle YouTube player state changes
 function onPlayerStateChange(event) {
     if (event.data === YT.PlayerState.ENDED) {
-        playRandomRelatedMusic(); // Play random related music when the track ends
+        playNext();
     }
 }
 
 // Fetch music based on search query
 async function fetchMusic(query) {
-    const response = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&q=${encodeURIComponent(query)}&key=${apiKey}`);
-    const data = await response.json();
-    displayMusic(data.items);
+    try {
+        const response = await fetch(
+            `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&q=${encodeURIComponent(query)}&key=${apiKey}`
+        );
+        const data = await response.json();
+        displayMusic(data.items);
+    } catch (error) {
+        console.error('Error fetching music:', error);
+    }
 }
 
 // Display music tracks in the list
 function displayMusic(videos) {
-    playlist = videos.slice(0, 2); // Save the playlist
     const musicList = document.getElementById('music-list');
     musicList.innerHTML = ''; // Clear previous content
 
-    videos.forEach((video, index) => {
+    videos.forEach((video) => {
         const musicItem = document.createElement('div');
         musicItem.className = 'music-item';
         musicItem.innerHTML = `<h2>${video.snippet.title}</h2><p>${video.snippet.channelTitle}</p>`;
-        musicItem.onclick = () => playMusic(index); // Play music on click
+        musicItem.onclick = () => addToTempPlaylist(video); // Add to playlist on click
         musicList.appendChild(musicItem);
     });
 }
 
 // Play selected music
-function playMusic(index) {
-    currentIndex = index;
-    const videoId = playlist[index].id.videoId;
-    const trackTitle = playlist[index].snippet.title; // Get track title
-    const channelLogo = playlist[index].snippet.thumbnails.default.url; // Get channel logo URL
-
-    // Update player and UI
-    player.loadVideoById(videoId); // Load the video into the hidden player
-    player.setPlaybackQuality('small');
-    document.getElementById('current-track').textContent = trackTitle; // Update track name
-    document.getElementById('channel-logo').src = channelLogo; // Set channel logo
+function playMusic(video) {
+    const videoId = video.id.videoId;
+    player.loadVideoById(videoId);
+    document.getElementById('current-track').textContent = video.snippet.title;
     isPlaying = true;
     updatePlayPauseButton();
 }
 
-// Fetch related videos and play one at random
-async function playRandomRelatedMusic() {
-    const currentVideoId = playlist[currentIndex]?.id.videoId;
-    if (!currentVideoId) return;
-
-    const response = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&relatedToVideoId=${currentVideoId}&type=video&key=${apiKey}`);
-    const data = await response.json();
-
-    if (data.items.length > 0) {
-        // Choose a random video from the related videos
-        const randomIndex = Math.floor(Math.random() * data.items.length);
-        const randomVideo = data.items[randomIndex];
-
-        // Play the random related video
-        playlist.push(randomVideo); // Add it to the playlist for continuity
-        playMusic(playlist.length - 1);
-    } else {
-        console.log('No related videos found');
-    }
-}
-
-// Play the next track or random related music
+// Play the next track in the playlist
 function playNext() {
-    if (currentIndex < playlist.length - 1) {
+    if (currentIndex < tempPlaylist.length - 1) {
         currentIndex++;
-        playMusic(currentIndex);
+        playMusic(tempPlaylist[currentIndex]);
     } else {
-        const currentVideoId = playlist[currentIndex]?.id.videoId;
-        if (currentVideoId) {
-            playRandomRelatedMusic();
-        } else {
-            console.log("No current video ID to fetch related music.");
-        }
+        console.log('End of playlist');
     }
 }
 
-async function playRandomRelatedMusic() {
-    const currentVideoId = playlist[currentIndex]?.id.videoId;
-    if (!currentVideoId) {
-        console.log("No video ID available to fetch related music.");
-        return;
-    }
-
-    try {
-        const response = await fetch(
-            `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&relatedToVideoId=${currentVideoId}&key=${apiKey}`
-        );
-        const data = await response.json();
-
-        if (data.items && data.items.length > 0) {
-            const randomIndex = Math.floor(Math.random() * data.items.length);
-            const randomVideo = data.items[randomIndex];
-
-            playlist.push(randomVideo); // Add to playlist
-            playMusic(playlist.length - 1); // Play the last added video
-        } else {
-            console.log("No related videos found.");
-        }
-    } catch (error) {
-        console.error("Error fetching related music:", error);
-    }
-}
-
-// Play the previous track
+// Play the previous track in the playlist
 function playPrevious() {
     if (currentIndex > 0) {
-        playMusic(currentIndex - 1);
+        currentIndex--;
+        playMusic(tempPlaylist[currentIndex]);
     }
 }
 
-// Play/Pause toggle
-function togglePlayPause() {
-    if (isPlaying) {
-        player.pauseVideo(); // Pause the video
-    } else {
-        player.playVideo(); // Play the video
+// Add a video to the temporary playlist
+function addToTempPlaylist(video) {
+    if (!tempPlaylist.some((item) => item.id.videoId === video.id.videoId)) {
+        tempPlaylist.push(video);
+        savePlaylistToLocalStorage();
+        updateTempPlaylistUI();
     }
-    isPlaying = !isPlaying;
-    updatePlayPauseButton();
 }
 
-// Update the Play/Pause button text
-function updatePlayPauseButton() {
-    const playPauseButton = document.getElementById('play-pause');
-    playPauseButton.innerHTML = isPlaying ? '⏸️' : '▶️';
+// Remove a track from the temporary playlist
+function removeFromTempPlaylist(index) {
+    tempPlaylist.splice(index, 1);
+    savePlaylistToLocalStorage();
+    updateTempPlaylistUI();
 }
 
-// Event listener for search button
-document.getElementById('search-button').addEventListener('click', () => {
-    const query = document.getElementById('search').value;
-    if (query.trim().length > 0) {
-        fetchMusic(query);
+// Update the UI to display the temporary playlist
+function updateTempPlaylistUI() {
+    const tempPlaylistEl = document.getElementById('temp-playlist');
+    tempPlaylistEl.innerHTML = '';
+
+    tempPlaylist.forEach((video, index) => {
+        const playlistItem = document.createElement('div');
+        playlistItem.className = 'playlist-item';
+        playlistItem.innerHTML = `
+            <h3>${video.snippet.title}</h3>
+            <button onclick="removeFromTempPlaylist(${index})">Remove</button>
+        `;
+        playlistItem.onclick = () => {
+            currentIndex = index; // Update the current index
+            playMusic(video);
+        };
+        tempPlaylistEl.appendChild(playlistItem);
+    });
+}
+
+// Save the playlist to localStorage
+function savePlaylistToLocalStorage() {
+    localStorage.setItem('tempPlaylist', JSON.stringify(tempPlaylist));
+    console.log('Playlist saved to localStorage');
+}
+
+// Load the playlist from localStorage
+function loadPlaylistFromLocalStorage() {
+    const savedPlaylist = localStorage.getItem('tempPlaylist');
+    if (savedPlaylist) {
+        tempPlaylist = JSON.parse(savedPlaylist);
+        updateTempPlaylistUI();
+        console.log('Playlist loaded from localStorage');
+    }
+}
+
+// Toggle playlist visibility
+const togglePlaylistBtn = document.getElementById('toggle-playlist-btn');
+const playlistSection = document.getElementById('playlist-section');
+
+togglePlaylistBtn.addEventListener('click', () => {
+    if (playlistSection.style.display === 'none') {
+        playlistSection.style.display = 'block';
+        togglePlaylistBtn.textContent = 'Hide Playlist';
     } else {
-        document.getElementById('music-list').innerHTML = ''; // Clear music list if input is empty
+        playlistSection.style.display = 'none';
+        togglePlaylistBtn.textContent = 'Your Playlist';
     }
 });
 
-// Play/Pause button event listener
-document.getElementById('play-pause').addEventListener('click', togglePlayPause);
+// Update play/pause button state
+function updatePlayPauseButton() {
+    const playPauseButton = document.getElementById('play-pause');
+    playPauseButton.textContent = isPlaying ? '⏸️' : '▶️';
+}
 
-// Next button event listener
-document.getElementById('next').addEventListener('click', playNext);
+// Play/pause button event
+document.getElementById('play-pause').addEventListener('click', () => {
+    if (isPlaying) {
+        player.pauseVideo();
+        isPlaying = false;
+    } else {
+        player.playVideo();
+        isPlaying = true;
+    }
+    updatePlayPauseButton();
+});
 
-// Previous button event listener
-document.getElementById('prev').addEventListener('click', playPrevious);
+// Previous button event
+document.getElementById('prev').addEventListener('click', () => {
+    playPrevious();
+});
+
+// Next button event
+document.getElementById('next').addEventListener('click', () => {
+    playNext();
+});
+
+// Search button event
+document.getElementById('search-button').addEventListener('click', () => {
+    const query = document.getElementById('search').value;
+    if (query.trim()) {
+        fetchMusic(query);
+    }
+});
+
+// Clear playlist button
+document.getElementById('clear-playlist').addEventListener('click', () => {
+    tempPlaylist = [];
+    savePlaylistToLocalStorage();
+    updateTempPlaylistUI();
+    console.log('Playlist cleared');
+});
+
+// Load playlist on page load
+window.onload = loadPlaylistFromLocalStorage;
