@@ -25,13 +25,11 @@ function onPlayerStateChange(event) {
 
 // Fetch music based on search query
 async function fetchMusic(query) {
-    try {
-        const response = await fetch(
-            `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&q=${encodeURIComponent(query)}&key=${apiKey}`
-        );
-        const data = await response.json();
-        displayMusic(data.items);
-    } catch (error) {
+    try{
+    const response = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&q=${encodeURIComponent(query)}&maxResults=2&key=${apiKey}`);
+    const data = await response.json();
+    displayMusic(data.items);
+} catch (error) {
         console.error('Error fetching music:', error);
     }
 }
@@ -55,6 +53,7 @@ function playMusic(video) {
     const videoId = video.id.videoId;
     player.loadVideoById(videoId);
     document.getElementById('current-track').textContent = video.snippet.title;
+    document.getElementById('channel-logo').src = video.snippet.thumbnails.default.url; // Set channel logo
     isPlaying = true;
     updatePlayPauseButton();
 }
