@@ -110,15 +110,9 @@ main {
 
 footer {
     background-color: #121212; /* Match the theme */
-    color: #ffffff;
+    color: #FF0000;
     text-align: center;
     padding: 15px 0;
     font-size: 14px;
     margin-top: 20px; /* Add space above the footer */
-}
-
-footer p {
-    color: #FF0000; /* Link color */
-    text-decoration: none;
-    font-weight: bold;
 }
