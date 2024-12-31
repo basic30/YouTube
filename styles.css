@@ -71,6 +71,30 @@ main {
     background-color: #404040;
 }
 
+#playlist-section {
+    margin-top: 20px;
+}
+
+#temp-playlist {
+    border: 1px solid #ddd;
+    padding: 10px;
+    min-height: 50px;
+    background-color: #f9f9f9;
+}
+
+.playlist-item {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.playlist-item h3 {
+    margin: 0;
+    font-size: 16px;
+}
+
 /* Music player */
 #music-player {
     position: fixed;
