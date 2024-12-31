@@ -117,12 +117,8 @@ footer {
     margin-top: 20px; /* Add space above the footer */
 }
 
-footer a {
+footer p {
     color: #FF0000; /* Link color */
     text-decoration: none;
     font-weight: bold;
-}
-
-footer a:hover {
-    text-decoration: underline;
 }
