@@ -118,7 +118,7 @@ header {
     background-color: #282828;
     padding: 10px;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     gap: 10px;
 }
@@ -136,7 +136,6 @@ header {
     text-overflow: ellipsis;
     text-align: left;
     font-size: 16px;
-    margin-left: 10px;
 }
 
 #music-player button {
