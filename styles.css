@@ -124,7 +124,6 @@ h1 {
     justify-content: flex-start; /* Align elements to the left */
     align-items: center;
     gap: 10px;
-    z-index: 1000;
 }
 
 #channel-logo {
