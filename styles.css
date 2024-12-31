@@ -64,6 +64,7 @@ header {
 
 /* Playlist Section */
 #toggle-playlist-btn {
+    position: relative;
     margin: 20px auto;
     padding: 10px;
     background-color: #FF0000; /* Red background */
