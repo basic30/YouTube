@@ -114,17 +114,16 @@ h1 {
 
 /* Music Player */
 #music-player {
-    position: relative;
+    position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
     background-color: #282828;
     padding: 10px;
     display: flex;
-    justify-content: flex-start; /* Align elements to the left */
+    justify-content: center; /* Align elements to the left */
     align-items: center;
     gap: 10px;
-    width: 100%;
     box-sizing: border-box;
 }
 
