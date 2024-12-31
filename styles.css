@@ -91,6 +91,11 @@ main {
     border-radius: 50%;
 }
 
+#music-player div {
+    display: flex;
+    align-items: center;
+}
+
 #current-track {
     flex: 1;
     font-size: 16px;
