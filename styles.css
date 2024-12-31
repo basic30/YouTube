@@ -110,18 +110,16 @@ header {
 
 /* Music Player */
 #music-player {
-    position: relative;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-    background-color: #282828;
+    margin: 20px auto;
     padding: 10px;
+    max-width: 600px;
+    background-color: #282828; /* Dark background */
+    border: 1px solid #ccc;
+    border-radius: 5px;
     display: flex;
-    justify-content: flex-start; /* Align elements to the left */
     align-items: center;
-    gap: 10px
-    box-sizing: border-box;
+    justify-content: center;
+    gap: 10px;
 }
 
 #channel-logo {
