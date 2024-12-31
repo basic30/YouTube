@@ -121,6 +121,9 @@ header {
     justify-content: center;
     align-items: center;
     gap: 10px;
+    border: 2px solid white; /* White border */
+    border-radius: 10px; /* Optional: rounded corners */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6); /* Add box shadow */
 }
 
 #channel-logo {
