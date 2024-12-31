@@ -1,29 +1,18 @@
 const apiKey = 'AIzaSyA7k6glBajX2aK8yx49FhqDL43VesRIG64'; // Replace with your YouTube API key
-let player; // YouTube IFrame Player instance
 let currentIndex = 0;
-let isPlaying = false;
 let playlist = [];
+let isPlaying = false;
+let player = null;
 
-// Load the YouTube IFrame API and create the hidden player
+// Initialize the YouTube Player
 function onYouTubeIframeAPIReady() {
     player = new YT.Player('hidden-player', {
-        height: '0', // Hidden player
-        width: '0',  // Hidden player
+        height: '0',
+        width: '0',
         events: {
-            onReady: () => console.log('YouTube Player is ready'),
-            onStateChange: onPlayerStateChange,
-        },
+            onStateChange: onPlayerStateChange
+        }
     });
-}
-
-// Handle YouTube player state changes
-function onPlayerStateChange(event) {
-    if (event.data === YT.PlayerState.PLAYING) {
-        // Set playback quality to "small" (low quality)
-        player.setPlaybackQuality('small');
-    } if (event.data === YT.PlayerState.ENDED) {
-        playRandomRelatedMusic(); // Play random related music when the track ends
-    }
 }
 
 // Fetch music based on search query
@@ -33,7 +22,20 @@ async function fetchMusic(query) {
     displayMusic(data.items);
 }
 
-// Display music tracks in the list
+// Fetch related music
+async function fetchRelatedMusic(videoId) {
+    const response = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&relatedToVideoId=${videoId}&type=video&key=${apiKey}`);
+    const data = await response.json();
+
+    if (data.items.length > 0) {
+        // Pick a random video from the related videos
+        const randomIndex = Math.floor(Math.random() * data.items.length);
+        const randomVideo = data.items[randomIndex];
+        playMusic(randomVideo, true); // Play the random related video
+    }
+}
+
+// Display music tracks
 function displayMusic(videos) {
     playlist = videos; // Save the playlist
     const musicList = document.getElementById('music-list');
@@ -43,56 +45,50 @@ function displayMusic(videos) {
         const musicItem = document.createElement('div');
         musicItem.className = 'music-item';
         musicItem.innerHTML = `<h2>${video.snippet.title}</h2><p>${video.snippet.channelTitle}</p>`;
-        musicItem.onclick = () => playMusic(index); // Play music on click
+        musicItem.onclick = () => playMusic(video); // Play music on click
         musicList.appendChild(musicItem);
     });
 }
 
 // Play selected music
-function playMusic(index) {
-    currentIndex = index;
-    const videoId = playlist[index].id.videoId;
-    const trackTitle = playlist[index].snippet.title; // Get track title
-    player.loadVideoById(videoId); // Load the video into the hidden player
+function playMusic(video, isRandom = false) {
+    if (!isRandom) {
+        const index = playlist.findIndex(item => item.id.videoId === video.id.videoId);
+        currentIndex = index >= 0 ? index : 0; // Update the current index
+    }
+    const videoId = video.id.videoId;
+    const trackTitle = video.snippet.title;
+    const channelLogo = video.snippet.thumbnails.default.url; // Get channel logo
+
+    // Load the selected video into the YouTube player
+    player.loadVideoById(videoId);
+    player.setPlaybackQuality('small'); // Set video quality to low
     document.getElementById('current-track').textContent = trackTitle; // Update track name
+    document.getElementById('channel-logo').src = channelLogo; // Set channel logo
     isPlaying = true;
     updatePlayPauseButton();
 }
 
-// Fetch related videos and play one at random
-async function playRandomRelatedMusic() {
-    const currentVideoId = playlist[currentIndex]?.id.videoId;
-    if (!currentVideoId) return;
-
-    const response = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&relatedToVideoId=${currentVideoId}&type=video&key=${apiKey}`);
-    const data = await response.json();
-
-    if (data.items.length > 0) {
-        // Choose a random video from the related videos
-        const randomIndex = Math.floor(Math.random() * data.items.length);
-        const randomVideo = data.items[randomIndex];
-
-        // Play the random related video
-        playlist.push(randomVideo); // Add it to the playlist for continuity
-        playMusic(playlist.length - 1);
-    } else {
-        console.log('No related videos found');
-    }
-}
-
-// Play the next track or random related music
+// Play the next track
 function playNext() {
     if (currentIndex < playlist.length - 1) {
-        playMusic(currentIndex + 1);
+        currentIndex++;
+        playMusic(playlist[currentIndex]);
     } else {
-        playRandomRelatedMusic(); // Fetch and play random music if no next track is in the playlist
+        // If at the end of the playlist, fetch and play random related music
+        const currentVideoId = playlist[currentIndex]?.id.videoId;
+        if (currentVideoId) fetchRelatedMusic(currentVideoId);
     }
 }
 
 // Play the previous track
 function playPrevious() {
     if (currentIndex > 0) {
-        playMusic(currentIndex - 1);
+        currentIndex--;
+        playMusic(playlist[currentIndex]);
+    } else {
+        currentIndex = playlist.length - 1; // Loop back to the last track
+        playMusic(playlist[currentIndex]);
     }
 }
 
@@ -113,6 +109,13 @@ function updatePlayPauseButton() {
     playPauseButton.innerHTML = isPlaying ? '⏸️' : '▶️';
 }
 
+// Handle player state changes
+function onPlayerStateChange(event) {
+    if (event.data === YT.PlayerState.ENDED) {
+        playNext(); // Automatically play the next track or random related music when the current track ends
+    }
+}
+
 // Event listener for search button
 document.getElementById('search-button').addEventListener('click', () => {
     const query = document.getElementById('search').value;
@@ -123,11 +126,7 @@ document.getElementById('search-button').addEventListener('click', () => {
     }
 });
 
-// Play/Pause button event listener
+// Event listeners for player controls
 document.getElementById('play-pause').addEventListener('click', togglePlayPause);
-
-// Next button event listener
 document.getElementById('next').addEventListener('click', playNext);
-
-// Previous button event listener
 document.getElementById('prev').addEventListener('click', playPrevious);
