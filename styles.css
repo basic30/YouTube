@@ -67,7 +67,7 @@ h1 {
 
 /* Playlist Section */
 #toggle-playlist-btn {
-    margin-top: 20px;
+    margin: 20px auto;
     padding: 10px;
     background-color: #FF0000; /* Red background */
     color: white;
