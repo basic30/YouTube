@@ -85,9 +85,16 @@ async function playRandomRelatedMusic() {
 // Play the next track or random related music
 function playNext() {
     if (currentIndex < playlist.length - 1) {
-        playMusic(currentIndex + 1);
+        currentIndex++;
+        playMusic(currentIndex); // Play the next track in the playlist
     } else {
-        playRandomRelatedMusic(); // Fetch and play random music if no next track is in the playlist
+        // If at the end of the playlist, fetch and play random related music
+        const currentVideoId = playlist[currentIndex]?.id.videoId;
+        if (currentVideoId) {
+            playRandomRelatedMusic();
+        } else {
+            console.log("No more videos in the playlist and no video ID available.");
+        }
     }
 }
 
