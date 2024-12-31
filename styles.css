@@ -82,18 +82,12 @@ main {
     display: flex;
     align-items: center;
     color: white;
-    gap: 10px;
 }
 
 #music-player img {
     width: 40px; /* Set logo size */
     height: 40px;
     border-radius: 50%;
-}
-
-#music-player div {
-    display: flex;
-    align-items: center;
 }
 
 #current-track {
