@@ -6,6 +6,7 @@ body {
     background-color: #121212; /* Dark background */
     color: white; /* White text */
     text-align: center;
+    display: flex;
 }
 
 /* Header */
@@ -114,7 +115,7 @@ h1 {
 
 /* Music Player */
 #music-player {
-    position: fixed; /* Fixed position at the bottom */
+    position: relative; /* Fixed position at the bottom */
     bottom: 0; /* Stick to the bottom */
     left: 0;
     right: 0;
