@@ -99,3 +99,12 @@ document.getElementById('search-button').addEventListener('click', () => {
         document.getElementById('music-list').innerHTML = ''; // Clear music list if input is empty
     }
 });
+
+// Play/Pause button event listener
+document.getElementById('play-pause').addEventListener('click', togglePlayPause);
+
+// Next button event listener
+document.getElementById('next').addEventListener('click', playNext);
+
+// Previous button event listener
+document.getElementById('prev').addEventListener('click', playPrevious);
