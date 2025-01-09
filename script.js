@@ -26,18 +26,25 @@ function onPlayerStateChange(event) {
 // Fetch music based on search query using RapidAPI
 async function fetchMusic(query) {
     try {
-        const response = await fetch('https://youtube-music4.p.rapidapi.com/search', {
+        const url = new URL('https://youtube-music4.p.rapidapi.com/search');
+        const params = {
+            q: query,
+            maxResults: 2
+        };
+
+        // Append query parameters to the URL
+        Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
+
+        const response = await fetch(url, {
             method: 'GET',
             headers: {
                 'x-rapidapi-key': apiKey, // RapidAPI Key
                 'x-rapidapi-host': 'youtube-music4.p.rapidapi.com',
-            },
-            params: {
-                q: query,
-                maxResults: 2
             }
         });
+
         const data = await response.json();
+        console.log(data); // Check the structure of the API response
         displayMusic(data.result); // Assuming the results are in `data.result`
     } catch (error) {
         console.error('Error fetching music:', error);
@@ -48,6 +55,11 @@ async function fetchMusic(query) {
 function displayMusic(videos) {
     const musicList = document.getElementById('music-list');
     musicList.innerHTML = ''; // Clear previous content
+
+    if (videos.length === 0) {
+        musicList.innerHTML = '<p>No results found.</p>';
+        return;
+    }
 
     videos.forEach((video) => {
         const musicItem = document.createElement('div');
